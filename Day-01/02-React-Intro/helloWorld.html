@@ -12,7 +12,32 @@
 <body>
 	
 	<script type="text/babel">
-		
+		$(function(){
+			var Greeter = React.createClass({
+				getInitialState : function(){
+					return {
+						name : '',
+						message : '[dummy message]'
+					};
+				},
+				onGreet : function(){
+					var name = this.refs.txtName.value;
+					var newMessage = 'Hi ' + name + ', Thats all folks!!';
+					this.setState({message : newMessage});
+				},
+				render : function(){
+					return (
+						<div>
+							<label for="">Name :</label>
+							<input type="text" ref="txtName"/>
+							<input type="button" value="Greet" onClick={this.onGreet}/>
+							<div>{this.state.message}</div>
+						</div>
+					)
+				}
+			});
+			ReactDOM.render(<Greeter/>, document.body);
+		});
 	</script>
 </body>
 </html>
