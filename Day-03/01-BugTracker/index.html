@@ -3,57 +3,102 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Bug Tracker</title>
-	<style type="text/css">
-	section{
-		margin-bottom: 10px;
-	}
-	ol{
-		list-style: none;
-		width: 500px;
-	}
-	.closed{
-		color : red;
-		font-style: italic;
-		text-decoration: line-through;
-		font-weight: bold;
-	}
-	.stats{
-		font-size: 20pt;
-	}
-	.bug{
-		border : 1px solid gray;
-		background-color: #e7e7e7;
-		border-radius: 5px;
-		padding: 5px;
-		margin-bottom: 10px;
-	}
-	.title{
-		font-size: 16pt;
-		font-weight: bold;
-	}
-	</style>
+	<link rel="stylesheet" href="style.css">
+	<script src="browser.min.js"></script>
+	<script src="react.js"></script>
+	<script src="react-dom.js"></script>
 </head>
 <body>
-	<h1>Bug Tracker</h1>
-	<hr>
-	<section class="stats">
-		<span class="closed">2</span>
-		<span> / </span>
-		<span>5</span>
-	</section>
-	<section class="list">
-		<label for="">Name :</label>
-		<input type="text" name="" id="">
-		<input type="button" value="Add New">
-		<input type="button" value="Remove Closed">
-		<ol>
-			<li class="bug">
-				<div class="title closed">Server communication Error</div>
+<div id="app"></div>
+<script type="text/babel">
+	var BugTrackerApp = React.createClass({
+		render : function(){
+			return (<div>
+				<AppHeader />
+				<BugStats />
+				<BugList />
+			</div>);
+		}
+	});
+
+	var AppHeader = React.createClass({
+		render :  function(){
+			return (
+				<div>
+					<h1>Bug Tracker</h1>
+					<hr />
+				</div>
+			);
+		}
+	});
+
+	var BugStats = React.createClass({
+		render : function(){
+			return (
+				<section className="stats">
+					<span className="closed">2</span>
+					<span> / </span>
+					<span>5</span>
+				</section>
+			);
+		}
+	});
+
+	var BugList = React.createClass({
+		render : function(){
+			return (
+				<section className="list">
+					<BugAction />
+					<Bugs />
+				</section>
+			)
+		}
+	});
+
+	var BugAction = React.createClass({
+		render : function(){
+			return (
+				<div>
+					<label htmlFor="">Name :</label>
+					<input type="text" name="" id="" />
+					<input type="button" value="Add New" />
+					<input type="button" value="Remove Closed" />
+				</div>
+			);
+		}
+	});
+
+	var Bugs = React.createClass({
+		render : function(){
+			var bugs = [
+				{id : 1, name  : 'Server Communication failure', isClosed : false},
+				{id : 2, name  : 'Data validation fails', isClosed : true},
+			];
+			var bugItems = [];
+			for(var i=0; i < bugs.length; i++){
+				var bugItem = <Bug bug={bugs[i]}/>
+				bugItems.push(bugItem);
+			}
+			return (
+				<ol>
+					{bugItems}
+				</ol>
+			);
+		}
+	});
+
+	var Bug = React.createClass({
+		render : function(){
+			return (
+			<li className="bug">
+				<div className="title closed">{this.props.bug.name}</div>
 			</li>
-			<li class="bug">
-				<div class="title">Data validation failure</div>
-			</li>
-		</ol>
-	</section>
+			);
+		}
+	})
+	ReactDOM.render(<BugTrackerApp />, document.getElementById("app"));
+</script>
+	
+	
 </body>
 </html>
