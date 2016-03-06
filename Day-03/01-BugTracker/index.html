@@ -25,8 +25,22 @@
 			return bugs;
 		};
 		this.addNew = function(bugName){
-			console.log('User wants to add - ', bugName);
-		};
+			console.log("this is ->", this);
+			var newBug = {
+				id : bugs.reduce(function(result, bug){
+					return result > bug.id ? result : bug.id
+				},0)+1,
+				name : bugName,
+				isClosed : false
+			};
+			bugs.push(newBug);
+			console.log(bugs);
+			if (typeof this.onChange === 'function')
+				this.onChange();
+		}.bind(this);
+
+		this.onChange = null;
+
 	};
 	var bugStore = new BugStore();
 	var BugTrackerApp = React.createClass({
@@ -83,7 +97,6 @@
 				this.props.onAdd(this.refs.txtName.value);
 			},
 		render : function(){
-			
 			return (
 				<div>
 					<label htmlFor="">Name :</label>
@@ -125,7 +138,12 @@
 			);
 		}
 	})
-	ReactDOM.render(<BugTrackerApp store={bugStore}/>, document.getElementById("app"));
+	bugStore.onChange = renderApp;
+	function renderApp(){
+		ReactDOM.render(<BugTrackerApp store={bugStore}/>, document.getElementById("app"));
+	}
+	renderApp();
+	
 </script>
 	
 	
