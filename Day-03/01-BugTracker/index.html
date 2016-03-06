@@ -11,12 +11,29 @@
 <body>
 <div id="app"></div>
 <script type="text/babel">
+	function test(){
+		console.log('done')
+	}
+
+	function BugStore(){
+		var bugs = [
+			{id : 1, name  : 'Server Communication failure', isClosed : false},
+			{id : 2, name  : 'Data validation fails', isClosed : false},
+			{id : 3, name : 'UI components are not rendered' , isClosed : true}
+		];
+		this.getBugs = function(){
+			return bugs;
+		}
+	};
+	var bugStore = new BugStore();
 	var BugTrackerApp = React.createClass({
 		render : function(){
+			var bugs = this.props.store.getBugs();
+			console.log(bugs);
 			return (<div>
 				<AppHeader />
-				<BugStats />
-				<BugList />
+				<BugStats bugs={bugs}/>
+				<BugList bugs={bugs}/>
 			</div>);
 		}
 	});
@@ -34,11 +51,12 @@
 
 	var BugStats = React.createClass({
 		render : function(){
+			console.log(this.props.bugs);
 			return (
 				<section className="stats">
 					<span className="closed">2</span>
 					<span> / </span>
-					<span>5</span>
+					<span>{this.props.bugs.length}</span>
 				</section>
 			);
 		}
@@ -46,10 +64,11 @@
 
 	var BugList = React.createClass({
 		render : function(){
+			var bugs = this.props.bugs;
 			return (
 				<section className="list">
 					<BugAction />
-					<Bugs />
+					<Bugs bugs={bugs}/>
 				</section>
 			)
 		}
@@ -70,15 +89,12 @@
 
 	var Bugs = React.createClass({
 		render : function(){
-			var bugs = [
-				{id : 1, name  : 'Server Communication failure', isClosed : false},
-				{id : 2, name  : 'Data validation fails', isClosed : true},
-			];
-			var bugItems = [];
-			for(var i=0; i < bugs.length; i++){
-				var bugItem = <Bug bug={bugs[i]}/>
-				bugItems.push(bugItem);
-			}
+			
+			
+			var bugItems = this.props.bugs.map(function(bug){
+				return <Bug bug={bug} key={bug.id}/>
+			});
+
 			return (
 				<ol>
 					{bugItems}
@@ -89,14 +105,20 @@
 
 	var Bug = React.createClass({
 		render : function(){
+			var bugDisplay = this.props.bug.isClosed ? 
+				<div className="title closed" onClick={test}>{this.props.bug.name}</div>
+				:
+				<div className="title" onClick={test}>{this.props.bug.name}</div>
+
+		
 			return (
 			<li className="bug">
-				<div className="title closed">{this.props.bug.name}</div>
+				{bugDisplay}
 			</li>
 			);
 		}
 	})
-	ReactDOM.render(<BugTrackerApp />, document.getElementById("app"));
+	ReactDOM.render(<BugTrackerApp store={bugStore}/>, document.getElementById("app"));
 </script>
 	
 	
