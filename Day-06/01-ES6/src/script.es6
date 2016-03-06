@@ -1,3 +1,8 @@
+import SalaryCalculator from './SalaryCalculator.es6';
+
+var s = new SalaryCalculator();
+console.log(s.salary);
+
 window.addEventListener("DOMContentLoaded", () => {
 	document.getElementById("display").addEventListener('click', () => {
 		let emp = new Employee(100, 'Magesh');
@@ -32,3 +37,19 @@ console.log(Employee.whoAmI());
 function addNew(...nos){
 	return nos.reduce((result, num) => result + num);
 }
+
+class Rectangle {
+    constructor (width, height) {
+        this._width  = width;
+        this._height = height;
+    }
+    set width  (width)  { console.log(' width setter is executed'); 
+    this._width = width;               }
+    get width  ()       { console.log(' width getter is executed'); 
+    return this._width;                }
+    set height (height) { console.log(' height setter is executed'); 
+    this._height = height;             }
+    get height ()       { console.log(' height getter is executed'); 
+    return this._height;               }
+    get area   ()       { return this._width * this._height; }
+};

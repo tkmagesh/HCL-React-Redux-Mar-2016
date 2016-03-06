@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Salary Calculator</title>
+	<style>
+	.field{
+		margin-bottom: 10px;
+	}
+	label{
+		display : block;
+	}
+	#divResult{
+		color : red;
+		font-size: 20pt;
+		font-weight: bold;
+	}
+	</style>
+	<script src="jquery-1.12.1.js"></script>
+
+	<script src="react.js"></script>
+	<script src="react-dom.js"></script>
+	<script src="browser.min.js"></script>
+	<script type="text/babel">
+		Object.prototype.toInt = function(){
+			return parseInt(this,10);
+		};
+
+		//constructor function (class)
+		//Model
+		
+
+		//View
+		var SalaryCalculatorView = React.createClass({
+			getInitialState : function(){
+				 return {
+				 	salary : 0
+				 };
+			},
+			triggerCalculation : function(){
+				var basic = this.refs.txtBasic.value.toInt(),
+					hra = this.refs.txtHra.value.toInt(),
+					da = this.refs.txtDa.value.toInt(),
+					tax = this.refs.rangeTax.value.toInt(),
+					gross = basic + hra + da,
+					net = gross * ((100-tax)/100);
+				this.setState({salary : net});
+			},
+			
+			render : function(){
+				var calculator = this.props.calculator;
+				return (
+					<div className="content">
+						<div className="field">
+							<label htmlFor="">Basic :</label>
+							<input type="text" ref="txtBasic"/>
+						</div>
+						<div className="field">
+							<label htmlFor="">HRA :</label>
+							<input type="text" ref="txtHra" />
+						</div>
+						<div className="field">
+							<label htmlFor="">DA :</label>
+							<input type="text" ref="txtDa" />
+						</div>
+						<div className="field">
+							<label htmlFor="">Tax :</label>
+							<input type="range" ref="rangeTax" min="0" max="30" />
+							<span id="spanTax">[calculator.tax]</span>
+						</div>
+						<div className="field">
+							<input type="button" value="Calculate" onClick={this.triggerCalculation} />
+						</div>
+						<div className="field">
+							<div id="divResult">{this.state.salary}</div>
+						</div>
+					</div>
+				)
+			}
+		});
+	
+		$(function(){
+			
+			ReactDOM.render(<SalaryCalculatorView />, document.getElementById("calculator"));
+			
+		})
+		
+	</script>
+	
+</head>
+<body>
+	<h1>Salary Calculator</h1>
+	<div id="calculator"></div>
+</body>
+</html>

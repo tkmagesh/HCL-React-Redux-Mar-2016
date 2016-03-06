@@ -13,6 +13,13 @@
 	
 	<script type="text/babel">
 		$(function(){
+			var Messager = React.createClass({
+				render : function(){
+					return (
+						<h1>{this.props.msg}</h1>
+					);
+				}
+			});
 			var Greeter = React.createClass({
 				getInitialState : function(){
 					return {
@@ -31,7 +38,7 @@
 							<label for="">Name :</label>
 							<input type="text" ref="txtName"/>
 							<input type="button" value="Greet" onClick={this.onGreet}/>
-							<div>{this.state.message}</div>
+							<Messager msg={this.state.message}/>
 						</div>
 					)
 				}

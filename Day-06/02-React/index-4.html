@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Salary Calculator</title>
+	<style>
+	.field{
+		margin-bottom: 10px;
+	}
+	label{
+		display : block;
+	}
+	#divResult{
+		color : red;
+		font-size: 20pt;
+		font-weight: bold;
+	}
+	</style>
+	<script src="jquery-1.12.1.js"></script>
+
+	<script src="react.js"></script>
+	<script src="react-dom.js"></script>
+	<script src="browser.min.js"></script>
+	<script type="text/babel">
+		Object.prototype.toInt = function(){
+			return parseInt(this,10);
+		};
+
+		//constructor function (class)
+		//Model
+		function SalaryCalcultor(){
+			var data = {
+				basic : 0,
+				hra : 0,
+				da : 0,
+				tax : 0,
+				salary : 0
+			};
+			this.get = function(attrName){
+				return data[attrName];
+			};
+			this.set = function(attrName, value){
+				if (data[attrName] === value) return;
+				data[attrName] = value;
+				//trigger the change notification for 'attrName'
+				triggerChangeListener(attrName);
+				triggerChangeListener('all');
+			};
+
+			this.getAttributes = function(){
+				return {
+					basic : data.basic,
+					hra : data.hra,
+					da : data.da,
+					tax : data.tax,
+					salary : data.salary
+				};
+			}
+			function triggerChangeListener(attrName){
+				var subscriptionFns = eventHandlers[attrName];
+				subscriptionFns.forEach(function(subscriptionFn){
+					if (typeof subscriptionFn === 'function')
+						subscriptionFn();	
+				});
+				
+			}
+
+			var eventHandlers = {
+				basic : [],
+				hra : [],
+				da : [],
+				tax : [],
+				salary : [],
+				all :[]
+			};
+
+			this.onChange = function(attrName, eventHandlerFn){
+				eventHandlers[attrName].push( eventHandlerFn );
+			}.bind(this);
+	
+		}
+		SalaryCalcultor.prototype.calculate = function() {
+			var gross = this.get('basic').toInt() + this.get('hra').toInt() + this.get('da').toInt();
+			var net = gross * ((100-this.get('tax').toInt())/100);
+			this.set('salary', net);
+		};
+
+		//View
+		var SalaryCalculatorView = React.createClass({
+			
+			updateBasic : function(evt){
+				console.log(evt.target.value);
+				this.props.updateCalculator('basic', evt.target.value);
+			},
+			updateHra : function(evt){
+				this.props.updateCalculator('hra', evt.target.value);
+			},
+			updateDa : function(evt){
+				this.props.updateCalculator('da', evt.target.value);
+			},
+			updateTax : function(evt){
+				this.props.updateCalculator('tax', evt.target.value);
+			},
+			render : function(){
+				var calculator = this.props.calculator;
+				return (
+					<div className="content">
+						<div className="field">
+							<label htmlFor="">Basic :</label>
+							<input type="text" onChange={this.updateBasic} value={calculator.basic} />
+						</div>
+						<div className="field">
+							<label htmlFor="">HRA :</label>
+							<input type="text" onChange={this.updateHra} value={calculator.hra} />
+						</div>
+						<div className="field">
+							<label htmlFor="">DA :</label>
+							<input type="text" onChange={this.updateDa} value={calculator.da} />
+						</div>
+						<div className="field">
+							<label htmlFor="">Tax :</label>
+							<input type="range" onChange={this.updateTax} value={calculator.tax} min="0" max="30" />
+							<span id="spanTax">{calculator.tax}</span>
+						</div>
+						<div className="field">
+							<input type="button" value="Calculate" onClick={this.props.triggerCalculate} />
+						</div>
+						<div className="field">
+							<div id="divResult">{calculator.salary}</div>
+						</div>
+					</div>
+				)
+			}
+		});
+	
+		$(function(){
+			window.calculator = new SalaryCalcultor();
+			
+			function renderCalculator(){
+				var calculatorData = calculator.getAttributes();
+				ReactDOM.render(<SalaryCalculatorView calculator={calculatorData} updateCalculator={calculator.set} triggerCalculate={calculator.calculate.bind(calculator)}/>, document.getElementById("calculator"));
+			}
+			calculator.onChange('all', renderCalculator);
+			renderCalculator();
+		})
+		
+	</script>
+	
+</head>
+<body>
+	<h1>Salary Calculator</h1>
+	<div id="calculator"></div>
+</body>
+</html>
