@@ -23,17 +23,21 @@
 		];
 		this.getBugs = function(){
 			return bugs;
-		}
+		};
+		this.addNew = function(bugName){
+			console.log('User wants to add - ', bugName);
+		};
 	};
 	var bugStore = new BugStore();
 	var BugTrackerApp = React.createClass({
 		render : function(){
-			var bugs = this.props.store.getBugs();
+			var store = this.props.store,
+				bugs = store.getBugs();
 			console.log(bugs);
 			return (<div>
 				<AppHeader />
 				<BugStats bugs={bugs}/>
-				<BugList bugs={bugs}/>
+				<BugList bugs={bugs} onAdd={store.addNew}/>
 			</div>);
 		}
 	});
@@ -67,7 +71,7 @@
 			var bugs = this.props.bugs;
 			return (
 				<section className="list">
-					<BugAction />
+					<BugAction onAdd = {this.props.onAdd}/>
 					<Bugs bugs={bugs}/>
 				</section>
 			)
@@ -75,12 +79,16 @@
 	});
 
 	var BugAction = React.createClass({
+		addClick : function(){
+				this.props.onAdd(this.refs.txtName.value);
+			},
 		render : function(){
+			
 			return (
 				<div>
 					<label htmlFor="">Name :</label>
-					<input type="text" name="" id="" />
-					<input type="button" value="Add New" />
+					<input type="text" ref="txtName" />
+					<input type="button" value="Add New" onClick={this.addClick}/>
 					<input type="button" value="Remove Closed" />
 				</div>
 			);
@@ -89,8 +97,7 @@
 
 	var Bugs = React.createClass({
 		render : function(){
-			
-			
+
 			var bugItems = this.props.bugs.map(function(bug){
 				return <Bug bug={bug} key={bug.id}/>
 			});
